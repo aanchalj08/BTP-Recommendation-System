@@ -26,7 +26,7 @@ const StudentRegister = () => {
     let password = e.target.password.value;
     let confirmPassword = e.target.confirmPassword.value;
     const passwordRegex = /^(?=.*\d)[A-Za-z\d@$!%*?&]{5,}$/;
-    const baseUrl = import.meta.env.VITE_BASE_URL;
+    const baseUrl = "https://btp-recommendation-system.onrender.com";
 
     if (
       name.length > 0 &&
