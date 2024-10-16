@@ -19,7 +19,7 @@ const Login = () => {
     setIsLoading(true);
     let email = e.target.email.value;
     let password = e.target.password.value;
-    const baseUrl = import.meta.env.VITE_BASE_URL;
+    const baseUrl = "https://btp-recommendation-system.onrender.com";
 
     if (email.length > 0 && password.length > 0) {
       const formData = { email, password };
