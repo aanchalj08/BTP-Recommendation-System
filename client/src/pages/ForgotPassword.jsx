@@ -9,7 +9,7 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [userType, setUserType] = useState("teacher");
   const [isLoading, setIsLoading] = useState(false);
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = "https://btp-recommendation-system.onrender.com";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
