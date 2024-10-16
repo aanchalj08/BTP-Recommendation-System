@@ -15,7 +15,7 @@ const Register = () => {
   const [token, setToken] = useState(
     JSON.parse(localStorage.getItem("auth")) || ""
   );
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = "https://btp-recommendation-system.onrender.com";
 
   const [domainOptions, setDomainOptions] = useState([]);
 
