@@ -11,7 +11,7 @@ const ResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { resetToken } = useParams();
   const navigate = useNavigate();
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = "https://btp-recommendation-system.onrender.com";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
