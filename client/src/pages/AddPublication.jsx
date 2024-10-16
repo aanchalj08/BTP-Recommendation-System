@@ -19,7 +19,7 @@ const AddPublication = () => {
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = "https://btp-recommendation-system.onrender.com";
 
   const handleAddAuthor = () => {
     setAuthors([...authors, ""]);
