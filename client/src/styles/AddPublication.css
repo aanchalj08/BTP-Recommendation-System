@@ -1,0 +1,182 @@
+.add-main {
+  background: linear-gradient(135deg, #f6f9fc 0%, #e9ecef 100%);
+  min-height: 100vh;
+  padding: 2rem 0;
+}
+
+.form-container {
+  width: 90%;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2.5rem;
+  background-color: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  border: 2px solid #e0e0e0;
+
+  transition: transform 0.3s ease;
+}
+
+.form-container:hover {
+  transform: translateY(-5px);
+}
+
+h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 2.5rem;
+  font-size: 2.8rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.message {
+  text-align: center;
+  color: #e74c3c;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 2rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: #34495e;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="date"],
+input[type="url"],
+textarea {
+  width: 100%;
+  padding: 0.9rem;
+  border: 2px solid #e0e0e0 !important;
+  box-sizing: border-box;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="date"]:focus,
+input[type="url"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+}
+
+textarea {
+  height: 150px;
+  resize: vertical;
+  border: 2px solid #e0e0e0;
+}
+
+.author-input,
+.keyword-input {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.author-input input,
+.keyword-input input {
+  flex: 1;
+  margin-right: 1rem;
+}
+
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 0.9rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+button:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 1.2rem;
+  font-size: 1.3rem;
+  background-color: #2ecc71;
+  margin-top: 1.5rem;
+}
+
+.submit-btn:hover {
+  background-color: #27ae60;
+}
+
+@media (max-width: 768px) {
+  .form-container {
+    width: 95%;
+    padding: 2rem;
+  }
+
+  h2 {
+    font-size: 2.4rem;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="date"],
+  input[type="url"],
+  textarea {
+    font-size: 1rem;
+  }
+
+  button {
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+  }
+
+  .submit-btn {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-container {
+    width: 100%;
+    padding: 1.5rem;
+    border-radius: 0;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  .author-input,
+  .keyword-input {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .author-input input,
+  .keyword-input input {
+    margin-right: 0;
+    margin-bottom: 0.75rem;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
