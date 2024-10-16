@@ -1,5 +1,5 @@
 const { Sequelize } = require("sequelize");
-const fs = require("fs");
+const useSSL = process.env.NODE_ENV === "production";
 
 const sequelize = new Sequelize(
   process.env.MYSQL_DATABASE,
@@ -9,18 +9,18 @@ const sequelize = new Sequelize(
     host: process.env.MYSQL_HOST,
     dialect: "mysql",
     port: process.env.MYSQL_PORT || 4000,
-    logging: console.log,
-    dialectOptions: {
-      ssl: {
-        rejectUnauthorized: true,
-        ca: fs.readFileSync("/etc/ssl/cert.pem", "utf8"),
-      },
-      connectTimeout: 60000,
-    },
+    dialectOptions: useSSL
+      ? {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false,
+          },
+        }
+      : {},
     pool: {
       max: 5,
       min: 0,
-      acquire: 60000,
+      acquire: 30000,
       idle: 10000,
     },
   }
@@ -28,25 +28,12 @@ const sequelize = new Sequelize(
 
 const connectDB = async () => {
   try {
-    console.log("Attempting to connect to the database...");
-    console.log(`Host: ${process.env.MYSQL_HOST}`);
-    console.log(`Port: ${process.env.MYSQL_PORT || 4000}`);
-    console.log(`Database: ${process.env.MYSQL_DATABASE}`);
-
     await sequelize.authenticate();
     console.log("Connection has been established successfully.");
-
     await sequelize.sync({ alter: true });
     console.log("All models were synchronized successfully.");
   } catch (error) {
-    console.error("Unable to connect to the database:");
-    console.error("Error name:", error.name);
-    console.error("Error message:", error.message);
-    if (error.parent) {
-      console.error("Parent error:", error.parent.message);
-      console.error("Error code:", error.parent.code);
-    }
-    console.error("Full error object:", JSON.stringify(error, null, 2));
+    console.error("Unable to connect to the database:", error);
   }
 };
 
