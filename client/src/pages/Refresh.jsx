@@ -8,7 +8,7 @@ const Refresh = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState("idle");
   const [user, setUser] = useState(null);
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl ="https://btp-recommendation-system.onrender.com";
 
   const handleRefresh = async () => {
     setIsLoading(true);
