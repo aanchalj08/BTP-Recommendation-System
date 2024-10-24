@@ -20,4 +20,7 @@ export { default as StudentLogin } from "./StudentLogin";
 export { default as StudentRegister } from "./StudentRegister";
 export { default as SentRequests } from "./SentRequests";
 export { default as IncomingRequests } from "./IncomingRequests";
-export { default as Request } from "./Request";
+export { default as ProjectManagement } from "./ProjectManagement";
+export { default as FacultyDetails } from "./FacultyDetails";
+export { default as GroupManagement } from "./GroupManagement";
+export { default as EditStudentProfile } from "./EditStudentProfile";

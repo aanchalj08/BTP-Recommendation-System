@@ -5,9 +5,9 @@ const { Teacher } = require("../models/Teacher");
 const { Student } = require("../models/Student");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
-const axios = require("axios");
 const { Op } = require("sequelize");
 const bcrypt = require("bcrypt");
+const { GroupMember, Group } = require("../models/Group");
 
 const {
   fetchAndSavePublications,
@@ -179,9 +179,16 @@ const register = async (req, res) => {
 
 const studentregister = async (req, res) => {
   try {
-    let { username, email, password, department } = req.body;
+    let { username, email, password, cgpa, resumeLink, department } = req.body;
 
-    if (!username || !email || !password) {
+    if (
+      !username ||
+      !email ||
+      !password ||
+      cgpa === undefined ||
+      cgpa === null ||
+      isNaN(cgpa)
+    ) {
       return res
         .status(400)
         .json({ msg: "Please add all values in the request body" });
@@ -198,10 +205,20 @@ const studentregister = async (req, res) => {
       return res.status(400).json({ msg: "Email already in use" });
     }
 
+    // Convert cgpa to float if it's a valid number
+    cgpa = parseFloat(cgpa);
+    if (isNaN(cgpa) || cgpa < 0 || cgpa > 10) {
+      return res
+        .status(400)
+        .json({ msg: "Please enter a valid CGPA between 0 and 10." });
+    }
+
     const person = await Student.create({
       name: username,
       email: email,
       password: password,
+      cgpa: cgpa,
+      resumeLink: resumeLink,
       department: department,
     });
 
@@ -356,69 +373,66 @@ const refreshPublications = async (req, res) => {
 
 const sendBTPReq = async (req, res) => {
   try {
-    const { facultyName, facultyEmail, resumeLink, projectIdea } = req.body;
+    const { facultyId, projectIdea, groupId } = req.body;
     const studentId = req.user.id;
 
-    // Input validation
-    if (!facultyName || !facultyEmail || !resumeLink) {
+    if (!facultyId || !groupId) {
       return res.status(400).json({
-        message: "Faculty name, email, and resume link are required",
+        message: "Faculty ID and Group ID are required.",
       });
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(facultyEmail)) {
+    if (projectIdea && projectIdea.length > 200) {
       return res.status(400).json({
-        message: "Invalid email format",
+        message: "Project idea cannot exceed 200 characters.",
       });
     }
 
-    try {
-      new URL(resumeLink);
-    } catch (err) {
-      return res.status(400).json({
-        message: "Invalid resume link format",
-      });
-    }
-
-    if (projectIdea && projectIdea.split(" ").length > 80) {
-      return res.status(400).json({
-        message: "Project idea cannot exceed 80 words",
-      });
-    }
-
-    const faculty = await Teacher.findOne({
-      where: { email: facultyEmail },
+    const existingRequests = await BTPRequest.findAll({
+      where: {
+        facultyId,
+      },
     });
 
-    if (!faculty) {
-      return res.status(404).json({
-        message: "Faculty not found with the provided email",
+    const pendingRequestsCount = existingRequests.filter(
+      (request) => request.status === "pending"
+    ).length;
+    const acceptedRequestsCount = existingRequests.filter(
+      (request) => request.status === "accepted"
+    ).length;
+
+    if (pendingRequestsCount >= 20) {
+      return res.status(400).json({
+        message:
+          "The faculty already has 20 pending requests. Please try again later.",
       });
     }
 
-    // Check for existing request
+    if (acceptedRequestsCount >= 5) {
+      return res.status(400).json({
+        message:
+          "The faculty has already accepted 5 requests. You cannot send another request.",
+      });
+    }
+
     const existingRequest = await BTPRequest.findOne({
       where: {
-        studentId,
-        facultyId: faculty.id,
+        groupId,
+        facultyId,
       },
     });
 
     if (existingRequest) {
       return res.status(400).json({
-        message: "You have already sent a request to this faculty",
+        message: "You have already sent a request to this faculty.",
       });
     }
 
-    // Create new request
     const newRequest = await BTPRequest.create({
-      studentId,
-      facultyId: faculty.id,
-      facultyName,
-      facultyEmail,
-      resumeLink,
+      facultyId,
+      groupId,
       projectIdea,
+      status: "pending",
     });
 
     res.status(201).json(newRequest);
@@ -434,76 +448,160 @@ const sendBTPReq = async (req, res) => {
 
     if (error.name === "SequelizeUniqueConstraintError") {
       return res.status(409).json({
-        message: "A request with these details already exists",
+        message: "A request with these details already exists.",
       });
     }
 
     if (error.name === "SequelizeForeignKeyConstraintError") {
       return res.status(400).json({
-        message: "Invalid student ID or faculty ID",
+        message: "Invalid student ID or faculty ID.",
       });
     }
 
     res.status(500).json({
-      message: "An unexpected error occurred while creating the BTP request",
+      message: "An unexpected error occurred while creating the BTP request.",
       error: error.message,
     });
   }
 };
+
 const fetchReqForStudent = async (req, res) => {
   try {
     const studentId = req.user.id;
-    const sentRequests = await BTPRequest.findAll({
-      where: { studentId },
+
+    const groupMember = await GroupMember.findOne({ where: { studentId } });
+    if (!groupMember) {
+      return res
+        .status(404)
+        .json({ message: "Student does not belong to any group" });
+    }
+
+    const groupId = groupMember.groupId;
+
+    const btpRequests = await BTPRequest.findAll({
+      where: { groupId },
       include: [
         {
           model: Teacher,
-          attributes: ["name", "department"],
-        },
-      ],
-      attributes: [
-        "id",
-        "status",
-        "facultyName",
-        "facultyEmail",
-        "resumeLink",
-        "projectIdea",
-        "createdAt",
-        "updatedAt",
-      ],
-      order: [["createdAt", "DESC"]],
-    });
-
-    res.status(200).json(sentRequests);
-  } catch (error) {
-    console.error("Error fetching sent BTP requests:", error);
-    res.status(500).json({ message: "Failed to fetch sent BTP requests" });
-  }
-};
-
-const fecthReqForTeacher = async (req, res) => {
-  try {
-    const facultyId = req.user.id;
-    const incomingRequests = await BTPRequest.findAll({
-      where: { facultyId },
-      include: [
-        {
-          model: Student,
           attributes: ["name", "email", "department"],
         },
       ],
+      order: [["createdAt", "DESC"]],
+    });
+
+    const result = await Promise.all(
+      btpRequests.map(async (request) => {
+        const groupMembers = await GroupMember.findAll({
+          where: { groupId: request.groupId },
+          include: [
+            {
+              model: Student,
+              attributes: ["name", "email", "department", "cgpa", "resumeLink"],
+            },
+          ],
+        });
+
+        const studentInfo = groupMembers.map((member) => ({
+          studentName: member.Student.name,
+          studentEmail: member.Student.email,
+          studentDepartment: member.Student.department,
+          studentCgpa: member.Student.cgpa,
+          studentResumeLink: member.Student.resumeLink,
+        }));
+
+        const facultyInfo = {
+          facultyName: request.Teacher.name,
+          facultyEmail: request.Teacher.email,
+          facultyDepartment: request.Teacher.department,
+        };
+
+        return {
+          requestId: request.id,
+          status: request.status,
+          projectIdea: request.projectIdea,
+          createdAt: request.createdAt,
+          updatedAt: request.updatedAt,
+          faculty: facultyInfo,
+          students: studentInfo,
+        };
+      })
+    );
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error fetching BTP requests for group:", error);
+    res.status(500).json({ message: "Failed to fetch BTP requests" });
+  }
+};
+
+const fetchReqForTeacher = async (req, res) => {
+  try {
+    const facultyId = req.user.id;
+
+    const incomingRequests = await BTPRequest.findAll({
+      where: { facultyId },
       attributes: [
         "id",
         "status",
-        "resumeLink",
         "projectIdea",
         "createdAt",
         "updatedAt",
+        "groupId",
       ],
       order: [["createdAt", "DESC"]],
     });
 
-    res.status(200).json(incomingRequests);
+    const groupIds = incomingRequests.map((request) => request.groupId);
+
+    const groups = await Group.findAll({
+      where: { id: groupIds },
+      attributes: ["id", "name"],
+    });
+
+    const groupMembers = await GroupMember.findAll({
+      where: { groupId: groupIds },
+      attributes: ["groupId", "studentId"],
+    });
+
+    const studentIds = [
+      ...new Set(groupMembers.map((member) => member.studentId)),
+    ];
+
+    const students = await Student.findAll({
+      where: { id: studentIds },
+      attributes: ["id", "name", "email", "department", "cgpa", "resumeLink"],
+    });
+
+    const formattedRequests = incomingRequests.map((request) => {
+      const group = groups.find((group) => group.id === request.groupId);
+
+      const requestGroupMembers = groupMembers.filter(
+        (member) => member.groupId === request.groupId
+      );
+
+      const requestStudents = requestGroupMembers
+        .map((member) => {
+          const student = students.find(
+            (student) => student.id === member.studentId
+          );
+          return student || null;
+        })
+        .filter(Boolean);
+
+      return {
+        id: request.id,
+        status: request.status,
+        projectIdea: request.projectIdea,
+        createdAt: request.createdAt,
+        updatedAt: request.updatedAt,
+        groupId: request.groupId,
+        groupName: group ? group.name : "Unknown Group",
+        studentIds: requestStudents.map((student) => student.id),
+        students: requestStudents,
+      };
+    });
+
+    res.status(200).json(formattedRequests);
   } catch (error) {
     console.error("Error fetching incoming BTP requests:", error);
     res.status(500).json({ message: "Failed to fetch incoming BTP requests" });
@@ -515,26 +613,44 @@ const acceptBTPReq = async (req, res) => {
     const { id } = req.params;
     const facultyId = req.user.id;
 
+    // Check if the faculty has already accepted 5 requests
     const acceptedRequestsCount = await BTPRequest.count({
       where: { facultyId, status: "accepted" },
     });
 
-    if (acceptedRequestsCount >= 10) {
+    if (acceptedRequestsCount >= 5) {
       return res.status(400).json({
-        message: "Limit exceeded. Only 10 requests are allowed to be accepted.",
+        message: "Limit exceeded. Only 5 requests are allowed to be accepted.",
       });
     }
 
+    // Find the request based on the provided ID
     const request = await BTPRequest.findOne({
       where: { id, facultyId },
     });
 
     if (!request) {
       return res.status(404).json({
-        message: "Request not found or unauthorized",
+        message: "Request not found or unauthorized.",
       });
     }
 
+    // Get the groupId from the BTP request
+    const { groupId } = request;
+
+    // Check if the group has already been accepted by another faculty
+    const existingGroupRequest = await BTPRequest.findOne({
+      where: { groupId, status: "accepted" },
+    });
+
+    if (existingGroupRequest) {
+      return res.status(400).json({
+        message:
+          "This group's project has already been accepted by another faculty.",
+      });
+    }
+
+    // Update the status of the request to accepted
     await request.update({ status: "accepted" });
     res.status(200).json(request);
   } catch (error) {
@@ -566,6 +682,98 @@ const rejectBTPReq = async (req, res) => {
   }
 };
 
+const updateBTPRequestStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const facultyId = req.user.id;
+
+    if (!["accept", "reject"].includes(status)) {
+      return res.status(400).json({
+        message: "Invalid status. Status must be accept, or reject",
+      });
+    }
+
+    if (status === "accept") {
+      const acceptedRequestsCount = await BTPRequest.count({
+        where: { facultyId, status: "accepted" },
+      });
+      if (acceptedRequestsCount >= 5) {
+        return res.status(400).json({
+          message:
+            "Limit exceeded. Only 5 requests are allowed to be accepted.",
+        });
+      }
+    }
+
+    const request = await BTPRequest.findOne({
+      where: { id, facultyId },
+    });
+
+    if (!request) {
+      return res.status(404).json({
+        message: "Request not found or unauthorized",
+      });
+    }
+
+    let newstatus = "accepted";
+    if (status === "reject") {
+      newstatus = "rejected";
+    }
+
+    await request.update({ status: newstatus });
+    res.status(200).json(request);
+  } catch (error) {
+    console.error("Error updating BTP request status:", error);
+    res.status(500).json({ message: "Failed to update BTP request status" });
+  }
+};
+
+const getStudentData = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const student = await Student.findByPk(studentId, {
+      attributes: ["id", "name", "department", "cgpa", "resumeLink"], // Include name and department
+    });
+
+    if (!student) {
+      return res.status(404).json({ msg: "Student not found" });
+    }
+
+    return res.status(200).json(student);
+  } catch (error) {
+    console.error("Error fetching student data:", error);
+    return res.status(500).json({ msg: "Internal server error" });
+  }
+};
+
+const updateStudent = async (req, res) => {
+  try {
+    const { cgpa, resumeLink } = req.body;
+
+    // Validate input
+    if (cgpa === undefined || resumeLink === undefined) {
+      return res.status(400).json({ msg: "CGPA and Resume Link are required" });
+    }
+
+    const studentId = req.user.id;
+
+    const [updated] = await Student.update(
+      { cgpa, resumeLink },
+      { where: { id: studentId } }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ msg: "Student not found" });
+    }
+
+    return res.status(200).json({ msg: "Profile updated successfully" });
+  } catch (error) {
+    console.error("Error updating student profile:", error);
+    return res.status(500).json({ msg: "Internal server error" });
+  }
+};
+
 module.exports = {
   login,
   register,
@@ -577,8 +785,11 @@ module.exports = {
   studentlogin,
   studentregister,
   fetchReqForStudent,
-  fecthReqForTeacher,
+  fetchReqForTeacher,
   sendBTPReq,
   acceptBTPReq,
   rejectBTPReq,
+  updateBTPRequestStatus,
+  getStudentData,
+  updateStudent,
 };

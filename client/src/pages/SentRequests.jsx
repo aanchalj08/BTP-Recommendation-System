@@ -9,9 +9,10 @@ import {
   Building,
   Calendar,
   Bookmark,
-  Link as LinkIcon,
+  Link,
   FileText,
   Mail,
+  Users,
 } from "lucide-react";
 import "../styles/SentRequests.css";
 
@@ -32,6 +33,7 @@ const SentRequests = () => {
       const response = await axios.get(`${baseUrl}/api/v1/btp-requests/sent`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log(response);
       setRequests(response.data);
       setLoading(false);
     } catch (error) {
@@ -57,6 +59,41 @@ const SentRequests = () => {
         return "status-badge";
     }
   };
+
+  const StudentsList = ({ students }) => (
+    <div className="students-list">
+      <strong className="students-header">
+        <Users size={20} />
+        Group Members:
+      </strong>
+      {students.map((student, index) => (
+        <div key={index} className="student-info">
+          <div className="info-row">
+            <User size={16} />
+            <span>{student.studentName}</span>
+          </div>
+          <div className="info-row">
+            <Mail size={16} />
+            <span>{student.studentEmail}</span>
+          </div>
+          <div className="info-row">
+            <Building size={16} />
+            <span>CGPA: {student.studentCgpa}</span>
+          </div>
+          <div className="info-row">
+            <Link size={16} />
+            <a
+              href={student.studentResumeLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Resume Link
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <>
@@ -94,7 +131,7 @@ const SentRequests = () => {
         {!loading && !error && (
           <div className="requests-grid">
             {filterRequestsByStatus(activeTab).map((request) => (
-              <div key={request.id} className="request-card">
+              <div key={request.requestId} className="request-card">
                 <div className="request-header">
                   <span className={getStatusBadgeClass(request.status)}>
                     {request.status.charAt(0).toUpperCase() +
@@ -102,21 +139,26 @@ const SentRequests = () => {
                   </span>
                 </div>
                 <div className="request-body">
-                  <div className="info-row">
-                    <User size={20} />
-                    <strong>Faculty Name:</strong>
-                    <span>{request.facultyName}</span>
+                  <div className="faculty-info">
+                    <div className="info-row">
+                      <User size={20} />
+                      <strong>Faculty Name:</strong>
+                      <span>{request.faculty.facultyName}</span>
+                    </div>
+                    <div className="info-row email-row">
+                      <Mail size={20} />
+                      <strong>Faculty Email:</strong>
+                      <span>{request.faculty.facultyEmail}</span>
+                    </div>
+                    <div className="info-row">
+                      <Building size={20} />
+                      <strong>Department:</strong>
+                      <span>{request.faculty.facultyDepartment}</span>
+                    </div>
                   </div>
-                  <div className="info-row email-row">
-                    <Mail size={20} />
-                    <strong>Faculty Email:</strong>
-                    <span>{request.facultyEmail}</span>
-                  </div>
-                  <div className="info-row">
-                    <Building size={20} />
-                    <strong>Department:</strong>
-                    <span>{request.Teacher?.department}</span>
-                  </div>
+
+                  <StudentsList students={request.students} />
+
                   <div className="info-row">
                     <Calendar size={20} />
                     <strong>Sent Date:</strong>
@@ -124,18 +166,7 @@ const SentRequests = () => {
                       {new Date(request.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <div className="info-row">
-                    <LinkIcon size={20} />
-                    <strong>Resume:</strong>
-                    <a
-                      href={request.resumeLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      View Resume
-                    </a>
-                  </div>
+
                   {request.projectIdea && (
                     <div className="info-row project-idea">
                       <strong>

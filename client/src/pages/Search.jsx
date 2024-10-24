@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import Select from "react-select";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "./Navbar";
 import "../styles/Search.css";
@@ -115,11 +115,32 @@ const Search = () => {
     }
   };
 
-  const handleViewPublications = (e, userId) => {
-    e.stopPropagation();
-    navigate(`/user/${userId}?userType=${userRole}&searchType=${searchType}`, {
-      state: { searchResults },
-    });
+  const handleCardClick = (faculty) => {
+    if (userRole === "student") {
+      navigate(
+        `/faculty/${faculty.id}?searchType=${searchType}&userType=${userRole}`,
+        {
+          state: {
+            searchResults,
+            faculty,
+          },
+        }
+      );
+    } else {
+      handleViewPublications(faculty.id);
+    }
+  };
+
+  const handleViewPublications = (facultyId) => {
+    navigate(
+      `/user/${facultyId}?userType=${userRole}&searchType=${searchType}`,
+      {
+        state: {
+          searchResults,
+          facultyId,
+        },
+      }
+    );
   };
 
   const handlePrevious = () => {
@@ -159,10 +180,10 @@ const Search = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           >
             <option value="">Select Department</option>
-            <option value="CSE">CSE</option>
-            <option value="CCE">CCE</option>
-            <option value="ECE">ECE</option>
-            <option value="MME">MME</option>
+            <option value="CSE">Computer Science & Engineering</option>
+            <option value="CCE">Communication & Computer Engineering</option>
+            <option value="ECE">Electronics & Communication Engineering</option>
+            <option value="MME">Mechanical & Mechatronics Engineering</option>
           </select>
         );
       case "domain":
@@ -241,23 +262,20 @@ const Search = () => {
               {hasSearched && searchResults.length === 0 && !loading && (
                 <div className="empty-search">No results found!</div>
               )}
-              {searchResults.length > 0 && (
+              {searchResults && searchResults.length > 0 && (
                 <div className="search-results">
                   <h2>Search Results:</h2>
                   <ul>
                     {getCurrentPageResults().map((user) => (
-                      <li key={user.id} className="result-card">
+                      <li
+                        key={user.id}
+                        className="result-card"
+                        onClick={() => handleCardClick(user)}
+                      >
                         <strong>Name:</strong> {user.name} <br />
                         <strong>Department:</strong> {user.department} <br />
                         <strong>Email:</strong> {user.email} <br />
-                        <strong>Domains:</strong> {user.domains.join(", ")}{" "}
-                        <br />
-                        <button
-                          onClick={(e) => handleViewPublications(e, user.id)}
-                          className="view-publications-button"
-                        >
-                          View Publications
-                        </button>
+                        <strong>Domains:</strong> {user.domains.join(", ")}
                       </li>
                     ))}
                   </ul>
@@ -290,6 +308,7 @@ const Search = () => {
           )}
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

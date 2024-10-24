@@ -6,7 +6,7 @@ import "../styles/Landing.css";
 const Landing = () => {
   return (
     <div className="landing-container">
-      <h1 className="landing-title">BTP Guide, LNMIIT</h1>
+      <h1 className="landing-title">BTP - MTP, LNMIIT</h1>
       <p className="landing-subtitle">
         Your Gateway to LNMIIT's Research Excellence
       </p>

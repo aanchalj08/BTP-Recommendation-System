@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "../styles/Navbar.css";
 import collegelogo from "../assets/collegelogo.png";
-import { User } from "lucide-react";
+import { User, PlusCircle } from "lucide-react";
 
 function Navbar({ onSearchClick }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
   const [userRole, setUserRole] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
+
+  const userMenuRef = useRef(null);
+  const addMenuRef = useRef(null);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -17,12 +21,34 @@ function Navbar({ onSearchClick }) {
     setUserRole(role || "");
   }, [location]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+      if (addMenuRef.current && !addMenuRef.current.contains(event.target)) {
+        setIsAddMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   const toggleUserMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
+    setIsAddMenuOpen(false);
+  };
+
+  const toggleAddMenu = () => {
+    setIsAddMenuOpen(!isAddMenuOpen);
+    setIsUserMenuOpen(false);
   };
 
   const handleSearchClick = (e) => {
@@ -41,14 +67,13 @@ function Navbar({ onSearchClick }) {
       { to: "/search", text: "Search", onClick: handleSearchClick },
     ];
     const teacherLinks = [
-      { to: "/add", text: "Add" },
       { to: "/saved-itineraries", text: "View Your Publications" },
       { to: "/refresh", text: "Refresh Your Data" },
       { to: "/faculty/incoming-requests", text: "View requests" },
     ];
     const studentLinks = [
       { to: "/student/sent-requests", text: "View requets" },
-      { to: "/send-request", text: "Send BTP Request" },
+      { to: "/grp-request", text: "Group Details" },
     ];
     const links =
       userRole === "teacher"
@@ -84,21 +109,47 @@ function Navbar({ onSearchClick }) {
       </div>
       <div className="navbar-right">
         {renderNavLinks()}
-        <div className="user-icon" onClick={toggleUserMenu}>
+        {userRole === "teacher" && (
+          <div className="add-icon" onClick={toggleAddMenu} ref={addMenuRef}>
+            <PlusCircle size={24} />
+            <div className={`user-dropdown ${isAddMenuOpen ? "show" : ""}`}>
+              <>
+                <Link to={`/add?userType=${userRole}`} onClick={toggleAddMenu}>
+                  Add Publication
+                </Link>
+                <Link
+                  to={`/edit-projects?userType=${userRole}`}
+                  onClick={toggleAddMenu}
+                >
+                  Float Project Ideas
+                </Link>
+              </>
+            </div>
+          </div>
+        )}
+        <div className="user-icon" onClick={toggleUserMenu} ref={userMenuRef}>
           <User size={24} />
-        </div>
-        <div className={`user-dropdown ${isUserMenuOpen ? "show" : ""}`}>
-          {userRole === "teacher" && (
-            <Link
-              to={`/edit-profile?userType=${userRole}`}
-              onClick={toggleUserMenu}
-            >
-              Edit Your Profile
+          <div className={`user-dropdown ${isUserMenuOpen ? "show" : ""}`}>
+            {userRole === "teacher" && (
+              <Link
+                to={`/edit-profile?userType=${userRole}`}
+                onClick={toggleUserMenu}
+              >
+                Edit Your Profile
+              </Link>
+            )}
+            {userRole === "student" && (
+              <Link
+                to={`/student-edit?userType=${userRole}`}
+                onClick={toggleUserMenu}
+              >
+                Edit Your Profile
+              </Link>
+            )}
+            <Link to="/logout" onClick={toggleUserMenu}>
+              Logout
             </Link>
-          )}
-          <Link to="/logout" onClick={toggleUserMenu}>
-            Logout
-          </Link>
+          </div>
         </div>
         <div className="navbar-menu-icon" onClick={toggleMenu}>
           ☰
@@ -106,8 +157,27 @@ function Navbar({ onSearchClick }) {
         <div className={`navbar-dropdown ${isMenuOpen ? "show" : ""}`}>
           {renderNavLinks()}
           {userRole === "teacher" && (
+            <>
+              <Link
+                to={`/edit-profile?userType=${userRole}`}
+                onClick={toggleMenu}
+              >
+                Edit Your Profile
+              </Link>
+              <Link to={`/add?userType=${userRole}`} onClick={toggleAddMenu}>
+                Add Publication
+              </Link>
+              <Link
+                to={`/edit-projects?userType=${userRole}`}
+                onClick={toggleAddMenu}
+              >
+                Float Project Ideas
+              </Link>
+            </>
+          )}
+          {userRole === "student" && (
             <Link
-              to={`/edit-profile?userType=${userRole}`}
+              to={`/student-edit?userType=${userRole}`}
               onClick={toggleMenu}
             >
               Edit Your Profile

@@ -10,9 +10,12 @@ import {
   Building,
   Calendar,
   Bookmark,
-  Link as LinkIcon,
+  Link,
   FileText,
+  Users,
+  Edit,
 } from "lucide-react";
+import { toast } from "react-toastify";
 import "../styles/IncomingRequests.css";
 
 const IncomingRequests = () => {
@@ -20,6 +23,9 @@ const IncomingRequests = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("pending");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newStatus, setNewStatus] = useState("");
+  const [selectedRequest, setSelectedRequest] = useState(null);
   const baseUrl = import.meta.env.VITE_BASE_URL;
 
   useEffect(() => {
@@ -35,6 +41,7 @@ const IncomingRequests = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      console.log(response);
       setRequests(response.data);
       setLoading(false);
     } catch (error) {
@@ -62,8 +69,68 @@ const IncomingRequests = () => {
       toast.success(`Request ${action}ed successfully!`);
     } catch (error) {
       console.error(`Error ${action}ing the request:`, error);
-      toast.error(`Failed to ${action} the request. Please try again.`);
+      if (error.response && error.response.data) {
+        const errorMessage =
+          error.response.data.message || "An error occurred.";
+        toast.error(errorMessage);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
     }
+  };
+
+  const handleRequestEdit = (requestId, newStatus) => {
+    setSelectedRequest(requestId);
+    setNewStatus(newStatus);
+    setIsModalOpen(true);
+  };
+
+  const handleSaveStatus = async () => {
+    try {
+      const token = JSON.parse(localStorage.getItem("auth"));
+      await axios.patch(
+        `${baseUrl}/api/v1/btp-requests/${selectedRequest}/status`,
+        { status: newStatus },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      fetchIncomingRequests();
+      toast.success(`Request status updated successfully!`);
+    } catch (error) {
+      console.error("Error updating the request:", error);
+      if (error.response && error.response.data) {
+        const errorMessage =
+          error.response.data.message || "An error occurred.";
+        toast.error(errorMessage);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
+    } finally {
+      setIsModalOpen(false);
+    }
+  };
+
+  const StatusEditModal = ({ isOpen, onClose, onSave }) => {
+    const handleSubmit = () => {
+      onSave();
+    };
+
+    return (
+      isOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Edit Request Status</h3>
+            <p>
+              Are you sure you want to{" "}
+              {newStatus === "approved" ? "approve" : "reject"} this request?
+            </p>
+            <button onClick={handleSubmit}>Confirm</button>
+            <button onClick={onClose}>Cancel</button>
+          </div>
+        </div>
+      )
+    );
   };
 
   const filterRequestsByStatus = (status) => {
@@ -81,6 +148,14 @@ const IncomingRequests = () => {
       default:
         return "status-badge";
     }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
 
   return (
@@ -127,40 +202,51 @@ const IncomingRequests = () => {
                   </span>
                 </div>
                 <div className="request-body">
-                  <div className="info-row">
-                    <User size={18} />
-                    <strong>Student Name:</strong>
-                    <span>{request.Student.name}</span>
+                  <div className="group-members-section">
+                    <div className="section-header">
+                      <Users size={18} />
+                      <strong>{request.groupName}</strong>
+                    </div>
+                    {request.students.map((student, index) => (
+                      <div key={student.id} className="member-details">
+                        <div className="info-row">
+                          <User size={16} />
+                          <strong>Name:</strong>
+                          <span>{student.name}</span>
+                        </div>
+                        <div className="info-row">
+                          <Mail size={16} />
+                          <strong>Email:</strong>
+                          <span>{student.email}</span>
+                        </div>
+                        <div className="info-row">
+                          <Building size={16} />
+                          <strong>CGPA:</strong>
+                          <span>{student.cgpa}</span>
+                        </div>
+                        <div className="info-row">
+                          <Link size={16} />
+                          <a
+                            href={student.resumeLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Resume Link
+                          </a>
+                        </div>
+                        {index < request.students.length - 1 && (
+                          <div className="member-divider"></div>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                  <div className="info-row">
-                    <Mail size={18} />
-                    <strong>Student Email:</strong>
-                    <span>{request.Student.email}</span>
-                  </div>
-                  <div className="info-row">
-                    <Building size={18} />
-                    <strong>Department:</strong>
-                    <span>{request.Student.department}</span>
-                  </div>
+
                   <div className="info-row">
                     <Calendar size={18} />
-                    <strong>Received Date:</strong>
-                    <span>
-                      {new Date(request.createdAt).toLocaleDateString()}
-                    </span>
+                    <strong>Submitted:</strong>
+                    <span>{formatDate(request.createdAt)}</span>
                   </div>
-                  <div className="info-row">
-                    <LinkIcon size={18} />
-                    <strong>Resume:</strong>
-                    <a
-                      href={request.resumeLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      View Resume
-                    </a>
-                  </div>
+
                   {request.projectIdea && (
                     <div className="info-row">
                       <FileText size={18} />
@@ -171,6 +257,7 @@ const IncomingRequests = () => {
                     </div>
                   )}
                 </div>
+
                 {activeTab === "pending" && (
                   <div className="request-actions">
                     <button
@@ -189,6 +276,30 @@ const IncomingRequests = () => {
                     </button>
                   </div>
                 )}
+
+                {activeTab === "accepted" && (
+                  <div className="request-actions">
+                    <button
+                      className="edit-btn"
+                      onClick={() => handleRequestEdit(request.id, "reject")}
+                    >
+                      <Edit size={16} />
+                      Edit
+                    </button>
+                  </div>
+                )}
+
+                {activeTab === "rejected" && (
+                  <div className="request-actions">
+                    <button
+                      className="edit-btn"
+                      onClick={() => handleRequestEdit(request.id, "accept")}
+                    >
+                      <Edit size={16} />
+                      Edit
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -202,6 +313,11 @@ const IncomingRequests = () => {
               <p>No {activeTab} requests found</p>
             </div>
           )}
+        <StatusEditModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleSaveStatus}
+        />
       </div>
     </>
   );

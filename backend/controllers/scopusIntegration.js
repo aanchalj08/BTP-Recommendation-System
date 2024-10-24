@@ -1,6 +1,5 @@
 const axios = require("axios");
 const { Publication } = require("../models/Publication");
-const { Op } = require("sequelize");
 const SCOPUS_API_KEY = process.env.SCOPUS_API_KEY;
 const SCOPUS_INST_TOKEN = process.env.SCOPUS_INST_TOKEN;
 

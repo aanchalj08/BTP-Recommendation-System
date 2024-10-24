@@ -1,0 +1,507 @@
+.faculty-details-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.faculty-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.back-button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.back-button:hover {
+  background-color: #2980b9;
+  transform: translateX(-2px);
+}
+
+.faculty-name {
+  margin-bottom: 0;
+}
+
+.go-back {
+  align-items: center;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.go-back button {
+  margin-bottom: 2rem;
+  background-color: #2c3e50;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+}
+
+.modal-content h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.group-details {
+  margin-bottom: 1.5rem;
+}
+
+.group-details ul {
+  list-style: none;
+  padding: 0;
+}
+
+.group-details li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.project-idea-input {
+  margin-bottom: 1.5rem;
+}
+
+.project-idea-input label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #666;
+}
+
+.project-idea-input textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.char-count {
+  text-align: right;
+  color: #666;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.modal-buttons button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-buttons button:first-child {
+  background-color: #e2e8f0;
+  color: #4a5568;
+}
+
+.modal-buttons button:last-child {
+  background-color: #3498db;
+  color: white;
+}
+
+.modal-buttons button:hover {
+  transform: translateY(-1px);
+}
+
+.project-idea-preview {
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.project-idea-preview h4 {
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.project-idea-preview p {
+  color: #666;
+  white-space: pre-wrap;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.modal-buttons button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.modal-buttons button:first-child {
+  background-color: #e2e8f0;
+  color: #4a5568;
+}
+
+.modal-buttons button:last-child {
+  background-color: #3498db;
+  color: white;
+}
+
+.modal-buttons button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    padding: 1rem;
+    width: 95%;
+  }
+}
+
+@media (max-width: 768px) {
+  .faculty-header {
+    gap: 0.5rem;
+  }
+
+  .back-button {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+}
+
+.faculty-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.empty {
+  text-align: center;
+  align-items: center;
+}
+
+.no-projects-message {
+  font-style: italic;
+}
+
+.faculty-info-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.faculty-name {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.faculty-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #666;
+}
+
+.tabs-header {
+  display: flex;
+  background-color: white;
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  background-color: #f5f5f5;
+}
+
+.tab-button.active {
+  background-color: #3498db;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tabs-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tab-panel {
+  min-height: 300px;
+}
+
+.publications-container {
+  text-align: center;
+}
+
+.view-publications-button {
+  background-color: #3498db;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-publications-button:hover {
+  background-color: #2980b9;
+  transform: translateY(-1px);
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.project-card {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.project-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.project-description {
+  color: #666;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.domain-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.domain-tag {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+}
+
+.btp-request-container {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.btp-request-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.btp-request-description {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.btp-request-button {
+  background-color: #e53e3e;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btp-request-button:hover {
+  background-color: #c53030;
+  transform: translateY(-1px);
+}
+
+/* Loading state base styles */
+.loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Preserve button dimensions during loading */
+button.loading {
+  min-width: max-content;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px; /* Set a fixed height for consistency */
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Add loading spinner to buttons */
+.loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  right: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* Specific button loading states */
+.btp-request-button.loading {
+  padding-right: 36px; /* Make space for spinner */
+}
+
+.modal-buttons button.loading {
+  padding-right: 36px;
+}
+
+.modal-buttons button.loading::after {
+  right: 12px;
+}
+
+/* Base button styles to ensure consistency */
+.btp-request-button,
+.modal-buttons button {
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+  white-space: nowrap;
+}
+
+/* Disabled button styles */
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Loading state text adjustments */
+.loading span {
+  visibility: visible;
+}
+
+/* Preserve hover effects during loading */
+.btp-request-button.loading:hover,
+.modal-buttons button.loading:hover {
+  transform: none;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+  .btp-request-button,
+  .modal-buttons button {
+    height: 36px; /* Slightly smaller on mobile */
+    padding: 0 1.25rem;
+  }
+
+  .loading::after {
+    width: 14px;
+    height: 14px;
+    right: 8px;
+  }
+
+  .btp-request-button.loading,
+  .modal-buttons button.loading {
+    padding-right: 32px;
+  }
+}
+@media (max-width: 768px) {
+  .faculty-details-container {
+    padding: 1rem;
+  }
+
+  .faculty-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tab-button {
+    font-size: 0.8rem;
+    padding: 0.5rem;
+  }
+}

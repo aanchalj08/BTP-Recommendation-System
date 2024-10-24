@@ -5,12 +5,10 @@ import "../styles/Register.css";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import Select from "react-select";
 
 const StudentRegister = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedDomains, setSelectedDomains] = useState([]);
   const navigate = useNavigate();
   const [token, setToken] = useState(
     JSON.parse(localStorage.getItem("auth")) || ""
@@ -19,22 +17,39 @@ const StudentRegister = () => {
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+
     let name = e.target.name.value;
     let lastname = e.target.lastname.value;
     let email = e.target.email.value;
     let department = e.target.department.value;
     let password = e.target.password.value;
     let confirmPassword = e.target.confirmPassword.value;
+    let cgpaInput = e.target.cgpa.value; // Get CGPA input as string
+    let cgpa = parseFloat(cgpaInput); // Parse as float
+    let resumeLink = e.target.resumeLink.value;
+
     const passwordRegex = /^(?=.*\d)[A-Za-z\d@$!%*?&]{5,}$/;
     const baseUrl = import.meta.env.VITE_BASE_URL;
 
+    console.log({
+      email,
+      password,
+      cgpa,
+      resumeLink,
+      department,
+    });
+
+    // Update validation checks here
     if (
       name.length > 0 &&
       lastname.length > 0 &&
       email.length > 0 &&
       department.length > 0 &&
       password.length > 0 &&
-      confirmPassword.length > 0
+      confirmPassword.length > 0 &&
+      !isNaN(cgpa) && // Check if CGPA is a valid number
+      cgpa >= 0 &&
+      cgpa <= 10 // Check if CGPA is within valid range
     ) {
       if (!passwordRegex.test(password)) {
         toast.error(
@@ -43,13 +58,25 @@ const StudentRegister = () => {
         setIsLoading(false);
         return;
       }
+
       if (password === confirmPassword) {
         const formData = {
           username: name + " " + lastname,
           email,
           department,
           password,
+          cgpa, // Include CGPA
+          resumeLink, // Include Resume Link
         };
+
+        try {
+          new URL(resumeLink); // Check for valid URL
+        } catch (_) {
+          toast.error("Please enter a valid Resume Link.");
+          setIsLoading(false);
+          return;
+        }
+
         try {
           const response = await axios.post(
             `${baseUrl}/api/v1/student-register`,
@@ -69,7 +96,7 @@ const StudentRegister = () => {
         setIsLoading(false);
       }
     } else {
-      toast.error("Please fill all inputs and select at least one domain");
+      toast.error("Please fill all inputs");
       setIsLoading(false);
     }
   };
@@ -128,11 +155,35 @@ const StudentRegister = () => {
                   <option value="" disabled selected>
                     Select Department
                   </option>
-                  <option value="CSE">CSE</option>
-                  <option value="CCE">CCE</option>
-                  <option value="ECE">ECE</option>
-                  <option value="MME">MME</option>
+                  <option value="CSE">Computer Science & Engineering</option>
+                  <option value="CCE">
+                    Communication & Computer Engineering
+                  </option>
+                  <option value="ECE">
+                    Electronics & Communication Engineering
+                  </option>
+                  <option value="MME">
+                    Mechanical & Mechatronics Engineering
+                  </option>
                 </select>
+                <span className="input-highlight"></span>
+              </div>
+              <div className="input-group">
+                <input
+                  type="text"
+                  placeholder="CGPA *"
+                  name="cgpa"
+                  step="0.01"
+                  required={true}
+                />
+                <span className="input-highlight"></span>
+              </div>
+              <div className="input-group">
+                <input
+                  type="text"
+                  placeholder="Resume Link (with appropiate access)"
+                  name="resumeLink"
+                />
                 <span className="input-highlight"></span>
               </div>
               <div className="input-group">

@@ -32,6 +32,21 @@ const Student = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    cgpa: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+      validate: {
+        min: 0.0,
+        max: 10.0,
+      },
+    },
+    resumeLink: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        isUrl: true,
+      },
+    },
     resetPasswordToken: DataTypes.STRING,
     resetPasswordExpire: DataTypes.DATE,
   },
@@ -45,9 +60,6 @@ const Student = sequelize.define(
     },
   }
 );
-
-Student.hasMany(BTPRequest, { foreignKey: "studentId" });
-BTPRequest.belongsTo(Student, { foreignKey: "studentId" });
 
 Student.prototype.comparePassword = async function (candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);

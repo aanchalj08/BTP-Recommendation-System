@@ -191,6 +191,47 @@
   border-radius: 4px;
 }
 
+.faculty-info {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.students-list {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.students-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #1e293b;
+  font-size: 1.1rem;
+}
+
+.student-info {
+  padding: 0.75rem;
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+}
+
+.student-info:last-child {
+  margin-bottom: 0;
+}
+
+.student-info .info-row {
+  margin-bottom: 0.5rem;
+}
+
+.student-info .info-row:last-child {
+  margin-bottom: 0;
+}
+
 @media (max-width: 1024px) {
   .requests-grid {
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));

@@ -1,5 +1,5 @@
 .incoming-requests-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 2rem auto;
   padding: 0 1.5rem;
   font-family: "Inter", sans-serif;
@@ -58,10 +58,9 @@
   background: #3b82f6;
   color: white;
 }
-
 .requests-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 1.5rem;
   padding: 1rem 0;
 }
@@ -74,7 +73,9 @@
   border: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
-  height: 450px;
+  height: auto;
+  min-height: 500px;
+  max-height: 700px;
 }
 
 .request-card:hover {
@@ -96,7 +97,10 @@
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 #f1f5f9;
 }
-
+.email-text {
+  word-break: break-all;
+  font-size: 0.9rem;
+}
 .request-body::-webkit-scrollbar {
   width: 6px;
 }
@@ -292,6 +296,180 @@
 
 .request-card {
   animation: fadeIn 0.3s ease forwards;
+}
+
+/* Add these new styles to your existing CSS file */
+
+.group-members-section {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  color: #1e293b;
+  font-size: 1.1rem;
+}
+
+.member-details {
+  background: white;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.member-details:last-child {
+  margin-bottom: 0;
+}
+
+.member-details .info-row {
+  margin-bottom: 0.5rem;
+}
+
+.member-details .info-row:last-child {
+  margin-bottom: 0;
+}
+
+.member-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 1rem 0;
+}
+
+/* Update the request-card height for the new content structure */
+.request-card {
+  height: auto;
+  min-height: 500px;
+  max-height: 800px;
+}
+
+.info-row {
+  margin-bottom: 0.75rem;
+}
+
+.info-row strong {
+  min-width: 100px;
+  display: inline-block;
+}
+
+.project-idea-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.request-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+.status-btn {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: white;
+  color: #64748b;
+}
+
+.status-btn:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.status-btn.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #f59e0b;
+}
+
+.status-btn.status-accepted {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #22c55e;
+}
+
+.status-btn.status-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #ef4444;
+}
+
+.status-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.edit-btn {
+  background-color: #f59e0b;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.edit-btn:hover {
+  background-color: #d97706;
+}
+
+.modal-content p {
+  margin-top: 1.5rem;
+}
+
+.modal-content button {
+  margin-right: 1rem;
+}
+
+@media (max-width: 768px) {
+  .requests-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .request-card {
+    min-height: auto;
+    max-height: none;
+  }
+
+  .info-row {
+    flex-direction: column;
+  }
+
+  .info-row strong {
+    min-width: auto;
+    margin-bottom: 0.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .group-members-section {
+    padding: 0.75rem;
+  }
+
+  .member-details {
+    padding: 0.75rem;
+  }
+
+  .info-row strong {
+    min-width: auto;
+    margin-bottom: 0.25rem;
+  }
 }
 
 @media (max-width: 768px) {

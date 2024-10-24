@@ -20,7 +20,10 @@ import {
   StudentRegister,
   SentRequests,
   IncomingRequests,
-  Request,
+  ProjectManagement,
+  FacultyDetails,
+  GroupManagement,
+  EditStudentProfile,
 } from "./pages";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -106,8 +109,20 @@ const router = createBrowserRouter([
         element: <IncomingRequests />,
       },
       {
-        path: "send-request",
-        element: <Request />,
+        path: "edit-projects",
+        element: <ProjectManagement></ProjectManagement>,
+      },
+      {
+        path: "faculty/:facultyId",
+        element: <FacultyDetails />,
+      },
+      {
+        path: "grp-request",
+        element: <GroupManagement />,
+      },
+      {
+        path: "student-edit",
+        element: <EditStudentProfile></EditStudentProfile>,
       },
     ],
   },

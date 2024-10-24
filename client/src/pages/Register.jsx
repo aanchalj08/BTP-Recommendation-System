@@ -159,10 +159,16 @@ const Register = () => {
                   <option value="" disabled selected>
                     Select Department
                   </option>
-                  <option value="CSE">CSE</option>
-                  <option value="CCE">CCE</option>
-                  <option value="ECE">ECE</option>
-                  <option value="MME">MME</option>
+                  <option value="CSE">Computer Science & Engineering</option>
+                  <option value="CCE">
+                    Communication & Computer Engineering
+                  </option>
+                  <option value="ECE">
+                    Electronics & Communication Engineering
+                  </option>
+                  <option value="MME">
+                    Mechanical & Mechatronics Engineering
+                  </option>
                 </select>
                 <span className="input-highlight"></span>
               </div>

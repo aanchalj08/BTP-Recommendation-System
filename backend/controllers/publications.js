@@ -149,7 +149,11 @@ exports.searchPublication = async (req, res) => {
 
     let whereClause = {};
     if (name) {
-      whereClause.name = { [Op.like]: `%${name}%` };
+      whereClause.name = sequelize.where(
+        sequelize.fn("LOWER", sequelize.col("name")),
+        "LIKE",
+        `%${name.toLowerCase()}%`
+      );
     }
     if (department) {
       whereClause.department = department;

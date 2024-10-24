@@ -51,6 +51,14 @@
   transition: all 0.3s ease;
 }
 
+.add-icon {
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-right: 1rem;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
 .user-icon:hover {
   background-color: rgba(0, 123, 255, 0.1);
 }
@@ -104,6 +112,10 @@
   .user-icon {
     display: none;
   }
+  .add-icon {
+    display: none;
+  }
+
   .navbar-link {
     display: none;
   }
@@ -114,6 +126,9 @@
 
 @media (max-width: 480px) {
   .user-icon {
+    display: none;
+  }
+  .add-icon {
     display: none;
   }
   .navbar {

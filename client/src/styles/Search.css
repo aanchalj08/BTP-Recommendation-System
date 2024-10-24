@@ -428,6 +428,88 @@
   }
 }
 
+/* Add these styles to your existing Search.css file */
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  width: 90%;
+  max-width: 600px;
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.project-card {
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.project-card h3 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.project-card p {
+  color: #34495e;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.domains {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.domain-tag {
+  background-color: #e9ecef;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: #495057;
+}
+
+.btp-request-section {
+  text-align: center;
+  padding: 1rem;
+}
+
+.btp-request-section h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.btp-request-section p {
+  color: #34495e;
+  margin-bottom: 1.5rem;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-pointer:hover {
+  background-color: #f8f9fa;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

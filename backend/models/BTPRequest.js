@@ -13,26 +13,24 @@ const BTPRequest = sequelize.define(
       type: DataTypes.ENUM("pending", "accepted", "rejected"),
       defaultValue: "pending",
     },
-    resumeLink: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        isUrl: true,
-      },
-    },
     projectIdea: {
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    facultyName: {
-      type: DataTypes.STRING,
-      allowNull: false,
+    facultyId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "Teacher",
+        key: "id",
+      },
     },
-    facultyEmail: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        isEmail: true,
+    groupId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "Group",
+        key: "id",
       },
     },
   },
