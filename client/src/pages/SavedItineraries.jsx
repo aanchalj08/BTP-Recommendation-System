@@ -16,7 +16,7 @@ const SavedItineraries = () => {
   const [totalPublications, setTotalPublications] = useState(0);
   const [pageLoading, setPageLoading] = useState(false);
   const [userRole, setUserRole] = useState("");
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = "https://btp-recommendation-system.onrender.com";
   const publicationsPerPage = 20;
 
   useEffect(() => {

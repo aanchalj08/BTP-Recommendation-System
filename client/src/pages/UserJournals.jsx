@@ -16,7 +16,7 @@ const UserJournals = () => {
   const [searchType, setSearchType] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = "https://btp-recommendation-system.onrender.com";
   const journalsPerPage = 20;
 
   useEffect(() => {

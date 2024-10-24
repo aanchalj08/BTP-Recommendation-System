@@ -23,7 +23,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = "https://btp-recommendation-system.onrender.com";
 
   const fetchName = async () => {
     let axiosConfig = {

@@ -8,7 +8,7 @@ const ItineraryDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id } = useParams();
-  const baseUrl = import.meta.env.VITE_BASE_URL;
+  const baseUrl = "https://btp-recommendation-system.onrender.com";
 
   useEffect(() => {
     const fetchPublication = async () => {

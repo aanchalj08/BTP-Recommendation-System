@@ -29,7 +29,7 @@ const StudentRegister = () => {
     let resumeLink = e.target.resumeLink.value;
 
     const passwordRegex = /^(?=.*\d)[A-Za-z\d@$!%*?&]{5,}$/;
-    const baseUrl = import.meta.env.VITE_BASE_URL;
+    const baseUrl = "https://btp-recommendation-system.onrender.com";
 
     console.log({
       email,
